@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Interactive Boxplot</title>
+		<script src="https://d3js.org/d3.v5.js"></script>  <!-- link to D3 library -->
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<style>
+				p {
+		  		display: block;
+		  		margin-top: 1em;
+		  		margin-bottom: 1em;
+		  		margin-left: 2em;
+		  		margin-right: 0;
+				}
+				div {
+		  		display: block;
+		  		margin-top: 2em;
+		  		margin-bottom: 2em;
+		  		margin-left: 2em;
+		  		margin-right: 0;
+				}
+		</style>
+	</head>
+
+	<body>
+		
+		<!-- Left-side part -->
+		<span id = "left", style="float:left; display: inline-block">
+			<p style="width: 470px;"><font size="5"><b>Create a boxplot</b></front></p>
+			<p style="width: 470px;"><font size="4">Click in the center of the blue strip to add points.</front></p>
+			<p style="width: 470px;">
+			<input type="radio" name="filterPreset" value="add" checked="true"> Add points
+			<input type="radio" name="filterPreset" value="remove"> Remove points
+			</p>
+		</span>
+
+		<!----The right hand side part--->
+		<span style="font-size:18px;float:left;width:400px">
+			<p style="width: 400px;"><front size="5"><b>How to Read a Boxplot</b></front></p>
+			<p style="margin-top: 120px;"></p>
+
+			<div>Data values:  <text id = "data"></text></div>
+			<div>Outliers: <text id = "outliers"></text></div>
+			<div>Upper whisker: <text id = "upper"></text></div>
+			<div>Q3: <text id = "Q3"></text></div>
+			<div>Median: <text id = "median"></text></div>
+			<div>Q1: <text id = "Q1"></text></div>
+			<div>Lower whisker: <text id = "lower"></text></div>
+		</span>
+		
+	</body>
+</html>
+
+<script type="text/javascript">
+
+/* Add an svg*/
+var w = 300;
+var h = 500;
+var margin = {top: 25, right: 0, bottom: 25, left: 100};
+
+var svg = d3.select("body").select("#left")
+			.append("svg")
+			.attr("id", "plot")
+			.attr("style","display: block")
+			.attr("width", w)
+			.attr("height", h)
+			.append("g")
+			.attr("transform", `translate (${margin.left}, ${margin.top})`)
+
+/*Scales and axises*/
+var innerWidth = w - margin.left - margin.right;
+var innerHeight = h - margin.top - margin.bottom;
+
+var yScale = d3.scaleLinear()
+					.domain([-100, 100])
+					.range([innerHeight, 0])
+
+var xScale = d3.scaleLinear()
+					.domain([0,innerWidth])
+					.range([0,innerWidth]);
+
+svg.call(d3.axisLeft(yScale))
+
+/*Prepare for the plot*/
+//add rectangle
+svg.append("rect")
+		.attr("x", 20)
+		.attr("y", 0)
+		.attr("width", innerWidth)
+		.attr("height", innerHeight)
+		.attr("fill", "lightblue");
+
+//points, based on the click position
+var box_plot_data = []
+var data_sorted = box_plot_data.sort(d3.ascending)
+var data = []
+var CircleSize = 5
+
+//updata points info
+//define the info of these points
+var q1 = d3.quantile(box_plot_data, .25)
+var median = d3.quantile(box_plot_data, .5)
+var q3 = d3.quantile(box_plot_data, .75)
+var interQuantileRange = q3 - q1
+var min = box_plot_data[box_plot_data.length-1]
+var max = box_plot_data[0]
+var outliers = []
+
+var i;
+function update(data) {
+	box_plot_data = [] //copy data[] into box_plot_data[]
+	for (var i = 0; i < data.length; i++) {
+		box_plot_data.push(data[i].y);
+	}
+
+	outliers=[]
+	data_sorted = box_plot_data.sort(d3.ascending)
+	q1 = Math.round(d3.quantile(data_sorted, .25))
+	median = Math.floor(d3.quantile(data_sorted, .5))
+	q3 = Math.floor(d3.quantile(data_sorted, .75))
+	interQuantileRange = q3 - q1
+
+	//the minimum number
+	for (var i = 0; i < data_sorted.length; i++) {
+		if (data_sorted[i] >= q1-1.5*interQuantileRange){
+    		min = data_sorted[i];
+    		if (data_sorted[i] > q1){
+        		min = q1;}
+    		break;
+		}
+		else{
+    		outliers.push(data_sorted[i]);
+		}
+	}
+
+	//the maximum number
+	for (var i = data_sorted.length-1; i >=0 ; i--) {
+		if (data_sorted[i] <= q3+1.5*interQuantileRange){
+    
+    		max = data_sorted[i];
+    		if (data_sorted[i] <= q3){
+        		max = q3;}
+    		break;
+		}
+		else{
+    		outliers.push(data_sorted[i]);
+		}
+	}
+
+	//outliers
+	outliers = outliers.sort(d3.ascending)
+
+	//update points data
+	$('#data').html(parsedata(box_plot_data))
+	$('#outliers').html(parsedata(outliers))
+	$('#upper').html(max.toString())
+	$('#Q3').html(q3.toString())
+	$('#median').html(median.toString())
+	$('#Q1').html(q1.toString())
+	$('#lower').html(min.toString())
+
+	var circles = svg.select("#plot_circles")
+					.selectAll("circle")
+					.data(data);
+	circles.enter().append("circle")
+			.merge(circles)
+			.attr("cx", function(d) { return xScale(d.x); })
+			.attr("cy",function(d) { return yScale(d.y); })
+			.attr("r", CircleSize)
+			.attr("fill", function(d) {
+				if (outliers.includes(d.y)) {
+					return "red";
+		    		}
+				else 	
+					{ return "blue" };
+				});
+	circles.exit().remove();
+}
+
+
+
+/*Draw boxplot*/
+var boxplot = svg.append("g").attr("id", "boxplot");
+var center = innerWidth/2+10
+var width = innerWidth/2
+var threshold    
+var threshold = 'add'
+
+var circles = svg.append("g")
+					.attr("id", "plot_circles")
+					.selectAll("circle")
+					.data(data);
+
+d3.selectAll("input")
+	.on("click", function () {
+		threshold = d3.select(this).node().value;
+	});
+
+
+	function draw_box(box_plot_data){
+		//when adding points
+			if (threshold == 'add'& box_plot_data.length == 1){
+ 			svg.select("#boxplot")
+ 			.append("line")
+ 			.attr("id", "line1")
+ 			.attr("x1", center)
+ 			.attr("x2", center)
+ 			.attr("y1", yScale(min) )
+ 			.attr("y2", yScale(max) )
+ 			.attr("stroke", "black");
+
+ 
+ 			svg.select("#boxplot")
+ 			.append("rect")
+ 			.attr("x", center - width/2)
+ 			.attr("y", yScale(q3) )
+ 			.attr("height", (yScale(q1)-yScale(q3)) )
+ 			.attr("width", width )
+ 			.attr("stroke", "black")
+ 			.style("fill", "#69b3a2")
+			.style("opacity","0.5");
+
+ 			svg.select("#boxplot")
+ 			.append("line")
+ 			.attr("id", "line2")
+ 			.attr("x1", center-width/2)
+ 			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(min) )
+ 			.attr("y2", yScale(min) )
+ 			.attr("stroke", "black");
+
+ 			svg.select("#boxplot")
+ 			.append("line")
+ 			.attr("id", "line3")
+ 			.attr("x1", center-width/2)
+ 			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(max) )
+ 			.attr("y2", yScale(max) )
+ 			.attr("stroke", "black");
+
+ 			svg.select("#boxplot")
+ 			.append("line")
+ 			.attr("id", "line4")
+ 			.attr("x1", center-width/2)
+			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(median) )
+ 			.attr("y2", yScale(median) )
+ 			.attr("stroke", "black");
+
+
+ 
+			}
+
+		 //when removing points
+			if(threshold == 'remove'& box_plot_data.length == 0){
+ 			svg.select("#boxplot").selectAll('line').remove()
+ 			svg.select("#boxplot").selectAll('rect').remove()
+
+ 			$('#upper').html("")
+ 			$('#Q3').html("")
+ 			$('#median').html("")
+ 			$('#Q1').html("")
+ 			$('#lower').html("")
+
+ 			}
+			else{
+ 
+ 			svg.select("#boxplot").select('rect')
+ 			.transition()
+ 			.duration(700)
+ 			.attr("x", center - width/2)
+ 			.attr("y", yScale(q3) )
+ 			.attr("height", (yScale(q1)-yScale(q3)) )
+ 			.attr("width", width )
+ 			.attr("stroke", "black")
+ 			.style("fill", "#69b3a2");
+
+ 			svg.select("#boxplot")
+ 			.select("#line1")
+ 			.transition()
+ 			.duration(700)
+ 			.attr("x1", center)
+ 			.attr("x2", center)
+ 			.attr("y1", yScale(min) )
+ 			.attr("y2", yScale(max) )
+ 			.attr("stroke", "black");
+
+ 			svg.select("#boxplot")
+ 			.select("#line2")
+ 			.transition()
+ 			.duration(700)
+ 			.attr("x1", center-width/2)
+ 			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(min) )
+ 			.attr("y2", yScale(min) )
+ 			.attr("stroke", "black");
+ 
+ 			svg.select("#boxplot")
+ 			.select("#line3")
+ 			.transition()
+ 			.duration(700)
+ 			.attr("x1", center-width/2)
+ 			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(max) )
+ 			.attr("y2", yScale(max) )
+ 			.attr("stroke", "black");
+ 
+ 			svg.select("#boxplot")
+ 			.select("#line4")
+ 			.transition()
+ 			.duration(700)
+ 			.attr("x1", center-width/2)
+ 			.attr("x2", center+width/2)
+ 			.attr("y1", yScale(median) )
+ 			.attr("y2", yScale(median) )
+ 			.attr("stroke", "black");
+			}
+ 
+
+		}
+
+
+function parsedata (data){
+	return data.toString().split(",").join(", ");
+}
+
+function update_text (box_plot_data){
+	$('#data').html(parsedata(box_plot_data));
+}	 
+
+
+function remove_data(data, new_data) {
+		for (var i = 0; i < data.length; i++) {
+			if (data[i].x == new_data.x & data[i].y == new_data.y) {
+    			return i;}
+
+			}
+		}
+
+/*Draw points*/
+svg.on('click',function(){
+	var coords = d3.mouse(this);
+	var new_data = {"x": Math.round((xScale.invert(coords[0]))), "y": Math.round(yScale.invert(coords[1]))}
+
+	if (threshold == "add") {
+		if (data == []){
+    		data = [
+       		new_data
+    		];
+		}
+		else{
+    		data.push(new_data);
+		}
+		update(data);
+		draw_box(box_plot_data);
+	}
+	else {
+		svg.selectAll("circle").on('click',function(){
+    		var new_data2 = {"x": Math.round((xScale.invert(d3.select(this).attr('cx')))), "y": Math.round(yScale.invert(d3.select(this).attr('cy')))}
+    
+    		if (threshold == "remove"){
+        		i = remove_data(data,new_data2);                   
+        		if (i != -1){
+            		data.splice(i, 1);
+           			update(data);
+            		draw_box(box_plot_data);
+            
+        		}
+    		}
+		})
+
+	}
+
+})
+	
+</script>

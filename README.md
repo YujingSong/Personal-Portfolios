@@ -49,7 +49,7 @@ The presentation for the paper above.<br>
 * Community Contritubtion.pdf:<br>
 Created a cheat sheet of world cloud package for R users.<br>
 * Interactive Boxplot.html:<br>
-Create an interactive boxplot webpage.
+Create an interactive boxplot webpage.<br>
 How to play with it?
   1. Download the 'Interactive Boxplot.html'
   2. Open the html file

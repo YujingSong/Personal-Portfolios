@@ -1,15 +1,6 @@
 Yujing Song's Personal Projects Brief Introduction
 ======================
 
-## KPMG Virtual Internship (on-going)
-Sprocket Central Pty Ltd, a medium size bikes & cycling accessories organisation, has approached Tony Smith (Partner) in KPMG’s Lighthouse & Innovation Team. Sprocket Central Pty Ltd  is keen to learn more about KPMG’s expertise in its Analytics, Information & Modelling team. 
-
-Sprocket Central Pty Ltd has given us a new list of 1000 potential customers with their demographics and attributes. However, these customers do not have prior transaction history with the organisation. The marketing team at Sprocket Central Pty Ltd is sure that, if correctly analysed, the data would reveal useful customer insights which could help optimise resource allocation for targeted marketing. Hence, improve performance by focusing on high value customers.
-
-### Files included in this folder:
-* Data Quality Assessment Email.pdf: <br>
-This is an email to the client identifying the data quality issues and strategies to mitigate these issues. The client provided KPMG with 3 datasets:Customer Demographic,Customer Addresses, Transactions data. 
-
 
 ## Clean Energy Porject
 UMM has long valued renewable energy and sustainability and has invested in solar cells and windturbines. 

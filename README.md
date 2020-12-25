@@ -1,5 +1,7 @@
 Yujing Song's Personal Projects Brief Introduction
 ======================
+## Stock Analysis and Prediction by LSTM (On-going)
+
 ## Vanguard Capstone Project
 With the growth of the capital market in the US, more institutional investors emerged. Vanguard, as the sponsor
 of this project, is interested in knowing how other market participants are approaching investments and new

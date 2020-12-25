@@ -1,5 +1,22 @@
 Yujing Song's Personal Projects Brief Introduction
 ======================
+## Vanguard Capstone Project
+With the growth of the capital market in the US, more institutional investors emerged. Vanguard, as the sponsor
+of this project, is interested in knowing how other market participants are approaching investments and new
+investment signals that are emerging. Based on this idea, we dived into 13F data, a quarterly financial report from
+all big institutional investors with over $100 million in asset under management, which discloses their equity
+holding details.<br>
+
+We want to use this data to get better understanding of the institutional investors and their characteristics, which
+gives instructions on which investors to follow. Also, understanding changes in investor behavior through time
+by looking at their portfolio holding changes could give insights on when to follow the actions of some smart
+investors.<br>
+
+#### Files included in this folder:
+* Capstone_Project_Final_Report.pdf: <br>
+Final report for this project.
+* Final presentation-v2.pptx.pdf:<br>
+Presentation slides for our final report.
 
 
 ## Clean Energy Porject

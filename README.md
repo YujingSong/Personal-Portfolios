@@ -25,6 +25,8 @@ investors.<br>
 Final report for this project.
 * Final presentation-v2.pptx.pdf:<br>
 Presentation slides for our final report.
+* Link for dashboard demo:<br>
+https://public.tableau.com/profile/columbia.vangurad.capstone2020#!/vizhome/finaldashboardforvanguard/aggbyindustry
 
 
 ## Clean Energy Porject

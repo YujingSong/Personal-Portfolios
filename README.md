@@ -2,6 +2,12 @@ Yujing Song's Personal Projects Brief Introduction
 ======================
 ## Stock Analysis and Prediction by LSTM (On-going)
 
+#### Files included in this folder:
+* Stock Prediction Based On LSTM Deep Learning.pdf: <br>
+The presentation slides for this project.
+* Yujing_Song_Stock_Prediction_Project.ipynb: <br>
+The code for this project.
+
 ## Vanguard Capstone Project
 With the growth of the capital market in the US, more institutional investors emerged. Vanguard, as the sponsor
 of this project, is interested in knowing how other market participants are approaching investments and new
